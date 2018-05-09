@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试中</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.timeout.js"></script>
+    <script>
+        $(function () {
+            //关闭页面前提示
+
+//            $(window).on("beforeunload", function () {
+//                return "您尚未交卷！此操作将导致您的回答丢失。";
+//            });
+//            timeOver = false; //保存当前是否已经达到交卷时间
+            //倒计时功能
+            $(".timeout").timeout({
+                //考试时间（页面刷新时，时间会重置。）
+                "maxTime": 1800,                                                                                        //此处时间固定为1800,改为根据题库中的时间变化
+                //到达时间自动交卷。（如果浏览器禁用JavaScript，此功能不会生效）
+                "onTimeOver": function () {
+                    timeOver = true;
+                    alert("考试时间结束，系统自动交卷。");
+                    $("#testForm").submit();//交卷
+                }
+            });
+//            $("#testForm").submit(function (event) {
+//                $(window).off("beforeunload");      //解除绑定页面关闭事件
+//                timeOver || checkMultiple(event);	//检查多选题是否全部作答
+//            });
+            //多选题至少选择一项
+//            function checkMultiple(event) {
+//                $(".jq-multiple .question-each").each(function () {
+//                    if ($(this).find(".question-option input[type=checkbox]:checked").length < 1) {
+//                        $(this).find(".question-option input[type=checkbox]:first").focus();
+//                        event.preventDefault();  //阻止表单提交
+//                        alert('您有多选题未作答。');
+//                        return false;
+//                    }
+//                });
+//            };
+        });
+    </script>
+</head>
+
+<body>
+    <!--试卷标题-->
+    <!--倒计时-->
+    <div class="top">
+        <div class="top-title">正在考试 (剩余时间 <span class="timeout"></span>)</div>
+    </div>
+
+    <div class="main">
+        <div class="main-wrap">
+            <!-- 顶部标题 -->
+            <div class="question-top">
+                <!-- 试卷标题 -->
+                <div class="question-title"><?$data['title']?></div>
+                <!-- 题型导航 -->
+                <div class="question-nav">
+                    <a href="#binary">判断题</a>
+                    <a href="#single">单选题</a>
+                    <a href="#multiple">多选题</a>
+                    <a href="#fill">填空题</a>
+                </div>
+            </div>
+
+
+            <form action="total.php?id=<?=$id?>" method="post">
+
+                <input type="radio" name="man" value="男">
+
+
+                <!--题目内容-->
+                <div id="binary" class="anchor" ></div>
+                <div class="question-wrap">
+                    <div class="question-type">一、判断题<span>(共<?=$count['binary']?>题,每题<?=$score['binary']?>分)</span></div>   <!--题目表单-->
+                    <div class="question-each">
+                        <?php foreach($data['data']['binary']['data'] as $k=>$v): ?>                                        <!--标题-->
+                            <div class="question-name"><?=$k, '. ', $v['question']?></div>
+                            <div class="question-option">
+                                <label><input type="radio" value="yes" name="binary[<?=$k?>]">对</label>                         <!--选项-->
+                                <label><input type="radio" value="yes" name="binary[<?=$k?>]">错</label>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+
+                <div id="single" class="anchor" ></div>
+                <div class="question-wrap">
+                    <div class="question-type">二、单选题<span>(共<?=$count['single']?>题,每题<?=$scroe['single']?>分)</span></div>
+                    <div class="question-each">
+                        <?php foreach($data['data']['single']['data'] as $k=>$v): ?>
+                            <div class="question-name"><?=$k, '. ', $v['question']?></div>
+                            <div class="question-option">
+                                <label><input type="radio" value="A" name="single[<?=$k?>]">A.<?=$v['option'][0]?></label>
+                                <label><input type="radio" value="B" name="single[<?=$k?>]">B.<?=$v['option'][1]?></label>
+                                <label><input type="radio" value="C" name="single[<?=$k?>]">C.<?=$v['option'][2]?></label>
+                                <label><input type="radio" value="D" name="single[<?=$k?>]">D.<?=$v['option'][3]?></label>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+
+                <div id="multiple" class="anchor" ></div>
+                <div class="question-wrap">
+                    <div class="question-type">三、多选题<span>(共<?=$count['multiple']?>题,每题<?=$scroe['multiple']?>分)</span></div>
+                    <div class="question-each">
+                        <?php foreach($data['data']['multiple']['data'] as $k=>$v): ?>
+                            <div class="question-name"><?=$k, '. ', $v['question']?></div>
+                            <div class="question-option">
+                                <label><input type="checkbox" value="A" name="multiple[<?=$k?>][]">A.<?=$v['option'][0]?></label>
+                                <label><input type="checkbox" value="B" name="multiple[<?=$k?>][]">B.<?=$v['option'][1]?></label>
+                                <label><input type="checkbox" value="C" name="multiple[<?=$k?>][]">C.<?=$v['option'][2]?></label>
+                                <label><input type="checkbox" value="D" name="multiple[<?=$k?>][]">D.<?=$v['option'][3]?></label>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+
+                <div id="fill" class="anchor" ></div>
+                <div class="question-wrap">
+                    <div class="question-type">四、填空题<span>(共<?=$count['fill']?>题,每题<?=$scroe['fill']?>分)</span></div>
+                    <?php foreach($data['data']['fill']['data'] as $k=>$v): ?>
+                        <div class="question-each">
+                            <div class="question-name"><?=$k,'. ',$v['question']?></div>
+                        </div>
+                        <div class="question-option">
+                            <span>请输入答案:<input type="text" name="fill['$k']"></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+
+                <div class="question-act">
+                    <input type="submit" value="交卷">                                                                           <!--此处答案无法传到total-->
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+
+    <div class="footer">
+        PHP在线考试系统　本项目仅供学习使用
+    </div>
+</body>
+</html>

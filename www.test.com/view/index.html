@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>首页 - 在线考试系统</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+
+<body>
+<div class="top">
+    <div class="top-title">在线考试系统</div>
+</div>
+
+<div class="main">
+    <div class="main-wrap">
+        <div class="main-title">请选择题库</div>
+        <?php foreach($info as $k => $v): ?>
+        <div class="main-each">
+                <div class="main-each-L"><?=$v['title']?></div>
+                <div class="main-each-R">
+                    <span>时间:<?=$v['time']?>分钟 总分:<?=$v['score']?>分</span>
+                    <a href="test.php?id=<?=$k?>">开始考试</a>
+                </div>
+
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<div class="footer">
+    PHP在线考试系统　本项目仅供学习使用
+</div>
+</body>
+
+</html>
+
